@@ -138,6 +138,6 @@ int main(int argc, char* argv[]) {
 
 使用了Deepseek,用途如下
 - 将'Inputer.cpp'转化为'ExpressionEvaluator.h'头文件
-- 提供'Expression.h'和'Simple3DFunctionGraphGenerator.cpp'编写思路
+- 提供'ExpressionEvaluator.h'和'Simple3DFunctionGraphGenerator.cpp'编写思路
 - 提供错误排查指导
 - 生成此文本
