@@ -1,0 +1,32 @@
+# Build
+[Dd]ebug/
+[Rr]elease/
+[Bb]uild/
+x64/
+x86/
+*.exe
+*.dll
+*.lib
+*.obj
+*.o
+*.out
+*.pdb
+*.ilk
+
+# IDE
+.vs/
+.vscode/
+*.vcxproj.user
+*.sln.docstates
+*.suo
+
+# Qt
+*.pro.user
+*.qmake.stash
+qrc_*.cpp
+moc_*.cpp
+ui_*.h
+
+# System
+.DS_Store
+Thumbs.db
