@@ -6,5 +6,5 @@
 - C++11
 
 # 编译
-1.使用Visual Studio打开.sln文件
-2.构建运行
+- 1.使用Visual Studio打开.sln文件
+- 2.构建运行
