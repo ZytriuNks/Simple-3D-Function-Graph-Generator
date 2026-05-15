@@ -8,10 +8,10 @@
 #include <stdexcept>
 #include <algorithm>
 
-// Ç°ÏòÉùÃ÷
+// å‰å‘å£°æ˜
 class ExprNode;
 
-// Token ÀàĞÍ
+// Token ç±»å‹
 enum class TokenType {
     NUMBER,
     VARIABLE,
@@ -22,12 +22,12 @@ enum class TokenType {
     END
 };
 
-// Token ½á¹¹
+// Token ç»“æ„
 struct Token {
     TokenType type;
-    double value;       // ÓÃÓÚ NUMBER
-    std::string name;   // ÓÃÓÚ VARIABLE »ò FUNCTION
-    char op;            // ÓÃÓÚ OPERATOR
+    double value;       // ç”¨äº NUMBER
+    std::string name;   // ç”¨äº VARIABLE æˆ– FUNCTION
+    char op;            // ç”¨äº OPERATOR
 
     Token(TokenType t) : type(t), value(0.0), op(0) {}
     Token(double v) : type(TokenType::NUMBER), value(v), op(0) {}
@@ -35,7 +35,7 @@ struct Token {
     Token(char o) : type(TokenType::OPERATOR), op(o), value(0.0) {}
 };
 
-// ´Ê·¨·ÖÎöÆ÷
+// è¯æ³•åˆ†æå™¨
 class Lexer {
 public:
     Lexer(const std::string& expr) : expr(expr), pos(0) {}
@@ -67,7 +67,7 @@ public:
                 ++pos;
             }
             else {
-                throw std::runtime_error("Î´Öª×Ö·û: " + std::string(1, ch));
+                throw std::runtime_error("æœªçŸ¥å­—ç¬¦: " + std::string(1, ch));
             }
         }
         tokens.push_back(Token(TokenType::END));
@@ -83,7 +83,7 @@ private:
         bool hasDot = false;
         while (pos < expr.length() && (isdigit(expr[pos]) || expr[pos] == '.')) {
             if (expr[pos] == '.') {
-                if (hasDot) throw std::runtime_error("Êı×Ö¸ñÊ½´íÎó: ¶à¸öĞ¡Êıµã");
+                if (hasDot) throw std::runtime_error("æ•°å­—æ ¼å¼é”™è¯¯: å¤šä¸ªå°æ•°ç‚¹");
                 hasDot = true;
             }
             ++pos;
@@ -98,7 +98,7 @@ private:
             ++pos;
         }
         std::string name = expr.substr(start, pos - start);
-        // ÒÑÖªº¯ÊıÁĞ±í   
+        // å·²çŸ¥å‡½æ•°åˆ—è¡¨   
         static const std::vector<std::string> functions = {
             "sin", "cos", "tan", "asin", "acos", "atan",
             "sqrt", "ln", "log10", "exp", "abs"
@@ -110,12 +110,12 @@ private:
             return Token(TokenType::VARIABLE, name);
         }
         else {
-            throw std::runtime_error("Î´Öª±êÊ¶·û: " + name);
+            throw std::runtime_error("æœªçŸ¥æ ‡è¯†ç¬¦: " + name);
         }
     }
 };
 
-// ³éÏóÓï·¨Ê÷½Úµã
+// æŠ½è±¡è¯­æ³•æ ‘èŠ‚ç‚¹
 class ExprNode {
 public:
     virtual ~ExprNode() = default;
@@ -138,7 +138,7 @@ public:
     double evaluate(const std::map<std::string, double>& vars) const override {
         auto it = vars.find(name);
         if (it == vars.end())
-            throw std::runtime_error("±äÁ¿Î´¶¨Òå: " + name);
+            throw std::runtime_error("å˜é‡æœªå®šä¹‰: " + name);
         return it->second;
     }
 };
@@ -159,23 +159,23 @@ public:
         case '-': return lv - rv;
         case '*': return lv * rv;
         case '/':
-            if (rv == 0) throw std::runtime_error("³ıÁã´íÎó");
+            if (rv == 0) throw std::runtime_error("é™¤é›¶é”™è¯¯");
             return lv / rv;
         case '^': return std::pow(lv, rv);
-        default: throw std::runtime_error("Î´ÖªÔËËã·û");
+        default: throw std::runtime_error("æœªçŸ¥è¿ç®—ç¬¦");
         }
     }
 };
 
 class UnaryNode : public ExprNode {
-    char op; // ½öÖ§³Ö '-'
+    char op; // ä»…æ”¯æŒ '-'
     std::unique_ptr<ExprNode> child;
 public:
     UnaryNode(char o, std::unique_ptr<ExprNode> c) : op(o), child(std::move(c)) {}
     double evaluate(const std::map<std::string, double>& vars) const override {
         double val = child->evaluate(vars);
         if (op == '-') return -val;
-        throw std::runtime_error("Î´ÖªÒ»ÔªÔËËã·û");
+        throw std::runtime_error("æœªçŸ¥ä¸€å…ƒè¿ç®—ç¬¦");
     }
 };
 
@@ -199,11 +199,11 @@ public:
         if (funcName == "log10") return std::log10(val);
         if (funcName == "exp") return std::exp(val);
         if (funcName == "abs") return std::fabs(val);
-        throw std::runtime_error("Î´Öªº¯Êı: " + funcName);
+        throw std::runtime_error("æœªçŸ¥å‡½æ•°: " + funcName);
     }
 };
 
-// µİ¹éÏÂ½µ½âÎöÆ÷
+// é€’å½’ä¸‹é™è§£æå™¨
 class Parser {
 public:
     Parser(const std::vector<Token>& tokens) : tokens(tokens), index(0) {}
@@ -226,24 +226,24 @@ private:
             ++index;
         }
         else {
-            throw std::runtime_error("Óï·¨´íÎó: ÆÚÍû " + tokenTypeToString(expected));
+            throw std::runtime_error("è¯­æ³•é”™è¯¯: æœŸæœ› " + tokenTypeToString(expected));
         }
     }
 
     std::string tokenTypeToString(TokenType type) const {
         switch (type) {
-        case TokenType::NUMBER: return "Êı×Ö";
-        case TokenType::VARIABLE: return "±äÁ¿";
-        case TokenType::FUNCTION: return "º¯Êı";
-        case TokenType::OPERATOR: return "ÔËËã·û";
+        case TokenType::NUMBER: return "æ•°å­—";
+        case TokenType::VARIABLE: return "å˜é‡";
+        case TokenType::FUNCTION: return "å‡½æ•°";
+        case TokenType::OPERATOR: return "è¿ç®—ç¬¦";
         case TokenType::LPAREN: return "'('";
         case TokenType::RPAREN: return "')'";
-        case TokenType::END: return "½áÊø";
-        default: return "Î´Öª";
+        case TokenType::END: return "ç»“æŸ";
+        default: return "æœªçŸ¥";
         }
     }
 
-    // ½âÎö±í´ïÊ½: ´¦Àí¼Ó¼õ·¨
+    // è§£æè¡¨è¾¾å¼: å¤„ç†åŠ å‡æ³•
     std::unique_ptr<ExprNode> parseExpression() {
         auto node = parseTerm();
         while (current().type == TokenType::OPERATOR && (current().op == '+' || current().op == '-')) {
@@ -255,7 +255,7 @@ private:
         return node;
     }
 
-    // ½âÎöÏî: ´¦Àí³Ë³ı·¨
+    // è§£æé¡¹: å¤„ç†ä¹˜é™¤æ³•
     std::unique_ptr<ExprNode> parseTerm() {
         auto node = parsePower();
         while (current().type == TokenType::OPERATOR && (current().op == '*' || current().op == '/')) {
@@ -267,18 +267,18 @@ private:
         return node;
     }
 
-    // ½âÎöÃİ: ÓÒ½áºÏ
+    // è§£æå¹‚: å³ç»“åˆ
     std::unique_ptr<ExprNode> parsePower() {
         auto node = parseUnary();
         if (current().type == TokenType::OPERATOR && current().op == '^') {
             ++index;
-            auto right = parsePower(); // ÓÒ½áºÏ
+            auto right = parsePower(); // å³ç»“åˆ
             node = std::make_unique<BinaryOpNode>('^', std::move(node), std::move(right));
         }
         return node;
     }
 
-    // ½âÎöÒ»ÔªÔËËã·û
+    // è§£æä¸€å…ƒè¿ç®—ç¬¦
     std::unique_ptr<ExprNode> parseUnary() {
         if (current().type == TokenType::OPERATOR && current().op == '-') {
             ++index;
@@ -288,7 +288,7 @@ private:
         return parsePrimary();
     }
 
-    // ½âÎö»ù±¾ÔªËØ: Êı×Ö¡¢±äÁ¿¡¢º¯Êıµ÷ÓÃ¡¢À¨ºÅ±í´ïÊ½
+    // è§£æåŸºæœ¬å…ƒç´ : æ•°å­—ã€å˜é‡ã€å‡½æ•°è°ƒç”¨ã€æ‹¬å·è¡¨è¾¾å¼
     std::unique_ptr<ExprNode> parsePrimary() {
         if (current().type == TokenType::NUMBER) {
             double val = current().value;
@@ -304,32 +304,32 @@ private:
             std::string funcName = current().name;
             ++index;
             if (current().type != TokenType::LPAREN) {
-                throw std::runtime_error("º¯Êı '" + funcName + "' ºóĞèÒª '('");
+                throw std::runtime_error("å‡½æ•° '" + funcName + "' åéœ€è¦ '('");
             }
-            ++index; // Ìø¹ı '('
+            ++index; // è·³è¿‡ '('
             auto arg = parseExpression();
             if (current().type != TokenType::RPAREN) {
-                throw std::runtime_error("È±ÉÙ ')'");
+                throw std::runtime_error("ç¼ºå°‘ ')'");
             }
-            ++index; // Ìø¹ı ')'
+            ++index; // è·³è¿‡ ')'
             return std::make_unique<FunctionNode>(funcName, std::move(arg));
         }
         else if (current().type == TokenType::LPAREN) {
-            ++index; // Ìø¹ı '('
+            ++index; // è·³è¿‡ '('
             auto node = parseExpression();
             if (current().type != TokenType::RPAREN) {
-                throw std::runtime_error("È±ÉÙ ')'");
+                throw std::runtime_error("ç¼ºå°‘ ')'");
             }
-            ++index; // Ìø¹ı ')'
+            ++index; // è·³è¿‡ ')'
             return node;
         }
         else {
-            throw std::runtime_error("Óï·¨´íÎó: ÒâÍâµÄ token");
+            throw std::runtime_error("è¯­æ³•é”™è¯¯: æ„å¤–çš„ token");
         }
     }
 };
 
-// ±í´ïÊ½ÇóÖµÆ÷·â×°
+// è¡¨è¾¾å¼æ±‚å€¼å™¨å°è£…
 class Expression {
 public:
     Expression(const std::string& expr) {
@@ -348,17 +348,17 @@ private:
     std::unique_ptr<ExprNode> ast;
 };
 
-// Ö÷º¯ÊıÑİÊ¾
+// ä¸»å‡½æ•°æ¼”ç¤º
 int main() {
-    std::cout << "=== Ö§³Ö x, y ±äÁ¿µÄ±í´ïÊ½ÇóÖµÆ÷ ===" << std::endl;
-    std::cout << "Ö§³ÖµÄÔËËã·û: + - * / ^ (ÃİÔËËã)" << std::endl;
-    std::cout << "Ö§³ÖµÄÊıÑ§º¯Êı: sin, cos, tan, asin, acos, atan, sqrt, ln, log10, exp, abs" << std::endl;
-    std::cout << "±äÁ¿: x, y" << std::endl;
-    std::cout << "ÊäÈë±í´ïÊ½ (ÊäÈë¿ÕĞĞÍË³ö): " << std::endl;
+    std::cout << "=== æ”¯æŒ x, y å˜é‡çš„è¡¨è¾¾å¼æ±‚å€¼å™¨ ===" << std::endl;
+    std::cout << "æ”¯æŒçš„è¿ç®—ç¬¦: + - * / ^ (å¹‚è¿ç®—)" << std::endl;
+    std::cout << "æ”¯æŒçš„æ•°å­¦å‡½æ•°: sin, cos, tan, asin, acos, atan, sqrt, ln, log10, exp, abs" << std::endl;
+    std::cout << "å˜é‡: x, y" << std::endl;
+    std::cout << "è¾“å…¥è¡¨è¾¾å¼ (è¾“å…¥ç©ºè¡Œé€€å‡º): " << std::endl;
 
     std::string line;
     while (true) {
-        std::cout << "±í´ïÊ½: ";
+        std::cout << "è¡¨è¾¾å¼: ";
         std::getline(std::cin, line);
         if (line.empty()) break;
 
@@ -369,13 +369,13 @@ int main() {
             std::cin >> x;
             std::cout << "y = ";
             std::cin >> y;
-            std::cin.ignore(); // Çå³ı»»ĞĞ·û
+            std::cin.ignore(); // æ¸…é™¤æ¢è¡Œç¬¦
 
             double result = expr.evaluate(x, y);
-            std::cout << "½á¹û: " << result << std::endl;
+            std::cout << "ç»“æœ: " << result << std::endl;
         }
         catch (const std::exception& e) {
-            std::cout << "´íÎó: " << e.what() << std::endl;
+            std::cout << "é”™è¯¯: " << e.what() << std::endl;
         }
         std::cout << std::endl;
     }
