@@ -14,7 +14,7 @@
 
 namespace ExprEval {
 
-    // Token ÀàĞÍ
+    // Token ç±»å‹
     enum class ExprEval_TokenType {
         ExprEval_NUMBER,
         ExprEval_VARIABLE,
@@ -25,12 +25,12 @@ namespace ExprEval {
         ExprEval_END
     };
 
-    // Token ½á¹¹Ìå£¨³ÉÔ±±äÁ¿ÖØÃüÃû£©
+    // Token ç»“æ„ä½“ï¼ˆæˆå‘˜å˜é‡é‡å‘½åï¼‰
     struct ExprEval_Token {
         ExprEval_TokenType tokenType;
-        double numericValue;       // ÓÃÓÚ ExprEval_NUMBER
-        std::string identifierName; // ÓÃÓÚ ExprEval_VARIABLE »ò ExprEval_FUNCTION
-        char operatorChar;         // ÓÃÓÚ ExprEval_OPERATOR
+        double numericValue;       // ç”¨äº ExprEval_NUMBER
+        std::string identifierName; // ç”¨äº ExprEval_VARIABLE æˆ– ExprEval_FUNCTION
+        char operatorChar;         // ç”¨äº ExprEval_OPERATOR
 
         ExprEval_Token(ExprEval_TokenType t) : tokenType(t), numericValue(0.0), operatorChar(0) {}
         ExprEval_Token(double v) : tokenType(ExprEval_TokenType::ExprEval_NUMBER), numericValue(v), operatorChar(0) {}
@@ -38,7 +38,7 @@ namespace ExprEval {
         ExprEval_Token(char o) : tokenType(ExprEval_TokenType::ExprEval_OPERATOR), operatorChar(o), numericValue(0.0) {}
     };
 
-    // ´Ê·¨·ÖÎöÆ÷
+    // è¯æ³•åˆ†æå™¨
     class ExprEval_Lexer {
     public:
         ExprEval_Lexer(const std::string& expr) : expr(expr), pos(0) {}
@@ -70,7 +70,7 @@ namespace ExprEval {
                     ++pos;
                 }
                 else {
-                    throw std::runtime_error("Î´Öª×Ö·û: " + std::string(1, ch));
+                    throw std::runtime_error("æœªçŸ¥å­—ç¬¦: " + std::string(1, ch));
                 }
             }
             tokens.push_back(ExprEval_Token(ExprEval_TokenType::ExprEval_END));
@@ -86,7 +86,7 @@ namespace ExprEval {
             bool hasDot = false;
             while (pos < expr.length() && (isdigit(expr[pos]) || expr[pos] == '.')) {
                 if (expr[pos] == '.') {
-                    if (hasDot) throw std::runtime_error("Êı×Ö¸ñÊ½´íÎó: ¶à¸öĞ¡Êıµã");
+                    if (hasDot) throw std::runtime_error("æ•°å­—æ ¼å¼é”™è¯¯: å¤šä¸ªå°æ•°ç‚¹");
                     hasDot = true;
                 }
                 ++pos;
@@ -112,12 +112,12 @@ namespace ExprEval {
                 return ExprEval_Token(ExprEval_TokenType::ExprEval_VARIABLE, name);
             }
             else {
-                throw std::runtime_error("Î´Öª±êÊ¶·û: " + name);
+                throw std::runtime_error("æœªçŸ¥æ ‡è¯†ç¬¦: " + name);
             }
         }
     };
 
-    // ³éÏóÓï·¨Ê÷½Úµã
+    // æŠ½è±¡è¯­æ³•æ ‘èŠ‚ç‚¹
     class ExprEval_Node {
     public:
         virtual ~ExprEval_Node() = default;
@@ -140,7 +140,7 @@ namespace ExprEval {
         double evaluate(const std::map<std::string, double>& vars) const override {
             auto it = vars.find(varName);
             if (it == vars.end())
-                throw std::runtime_error("±äÁ¿Î´¶¨Òå: " + varName);
+                throw std::runtime_error("å˜é‡æœªå®šä¹‰: " + varName);
             return it->second;
         }
     };
@@ -161,10 +161,10 @@ namespace ExprEval {
             case '-': return lv - rv;
             case '*': return lv * rv;
             case '/':
-                if (rv == 0) throw std::runtime_error("³ıÁã´íÎó");
+                if (rv == 0) throw std::runtime_error("é™¤é›¶é”™è¯¯");
                 return lv / rv;
             case '^': return std::pow(lv, rv);
-            default: throw std::runtime_error("Î´ÖªÔËËã·û");
+            default: throw std::runtime_error("æœªçŸ¥è¿ç®—ç¬¦");
             }
         }
     };
@@ -177,7 +177,7 @@ namespace ExprEval {
         double evaluate(const std::map<std::string, double>& vars) const override {
             double v = child->evaluate(vars);
             if (op == '-') return -v;
-            throw std::runtime_error("Î´ÖªÒ»ÔªÔËËã·û");
+            throw std::runtime_error("æœªçŸ¥ä¸€å…ƒè¿ç®—ç¬¦");
         }
     };
 
@@ -201,11 +201,11 @@ namespace ExprEval {
             if (funcName == "log10") return std::log10(v);
             if (funcName == "exp") return std::exp(v);
             if (funcName == "abs") return std::fabs(v);
-            throw std::runtime_error("Î´Öªº¯Êı: " + funcName);
+            throw std::runtime_error("æœªçŸ¥å‡½æ•°: " + funcName);
         }
     };
 
-    // µİ¹éÏÂ½µ½âÎöÆ÷
+    // é€’å½’ä¸‹é™è§£æå™¨
     class ExprEval_Parser {
     public:
         ExprEval_Parser(const std::vector<ExprEval_Token>& tokens) : tokens(tokens), index(0) {}
@@ -228,20 +228,20 @@ namespace ExprEval {
                 ++index;
             }
             else {
-                throw std::runtime_error("Óï·¨´íÎó: ÆÚÍû " + tokenTypeToString(expected));
+                throw std::runtime_error("è¯­æ³•é”™è¯¯: æœŸæœ› " + tokenTypeToString(expected));
             }
         }
 
         std::string tokenTypeToString(ExprEval_TokenType type) const {
             switch (type) {
-            case ExprEval_TokenType::ExprEval_NUMBER: return "Êı×Ö";
-            case ExprEval_TokenType::ExprEval_VARIABLE: return "±äÁ¿";
-            case ExprEval_TokenType::ExprEval_FUNCTION: return "º¯Êı";
-            case ExprEval_TokenType::ExprEval_OPERATOR: return "ÔËËã·û";
+            case ExprEval_TokenType::ExprEval_NUMBER: return "æ•°å­—";
+            case ExprEval_TokenType::ExprEval_VARIABLE: return "å˜é‡";
+            case ExprEval_TokenType::ExprEval_FUNCTION: return "å‡½æ•°";
+            case ExprEval_TokenType::ExprEval_OPERATOR: return "è¿ç®—ç¬¦";
             case ExprEval_TokenType::ExprEval_LPAREN: return "'('";
             case ExprEval_TokenType::ExprEval_RPAREN: return "')'";
-            case ExprEval_TokenType::ExprEval_END: return "½áÊø";
-            default: return "Î´Öª";
+            case ExprEval_TokenType::ExprEval_END: return "ç»“æŸ";
+            default: return "æœªçŸ¥";
             }
         }
 
@@ -303,12 +303,12 @@ namespace ExprEval {
                 std::string funcName = current().identifierName;
                 ++index;
                 if (current().tokenType != ExprEval_TokenType::ExprEval_LPAREN) {
-                    throw std::runtime_error("º¯Êı '" + funcName + "' ºóĞèÒª '('");
+                    throw std::runtime_error("å‡½æ•° '" + funcName + "' åéœ€è¦ '('");
                 }
                 ++index;
                 auto arg = parseExpression();
                 if (current().tokenType != ExprEval_TokenType::ExprEval_RPAREN) {
-                    throw std::runtime_error("È±ÉÙ ')'");
+                    throw std::runtime_error("ç¼ºå°‘ ')'");
                 }
                 ++index;
                 return std::make_unique<ExprEval_FunctionNode>(funcName, std::move(arg));
@@ -317,20 +317,20 @@ namespace ExprEval {
                 ++index;
                 auto node = parseExpression();
                 if (current().tokenType != ExprEval_TokenType::ExprEval_RPAREN) {
-                    throw std::runtime_error("È±ÉÙ ')'");
+                    throw std::runtime_error("ç¼ºå°‘ ')'");
                 }
                 ++index;
                 return node;
             }
             else {
-                throw std::runtime_error("Óï·¨´íÎó: ÒâÍâµÄ token");
+                throw std::runtime_error("è¯­æ³•é”™è¯¯: æ„å¤–çš„ token");
             }
         }
     };
 
 } // namespace ExprEval
 
-// ¶ÔÍâ½Ó¿Ú£¨¼ò½à·â×°£©
+// å¯¹å¤–æ¥å£
 class Expression {
 public:
     Expression(const std::string& expr) {
